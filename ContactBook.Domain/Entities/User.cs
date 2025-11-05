@@ -5,7 +5,7 @@ namespace ContactBook.Domain.Entities;
 public class User
 {
     [Key]
-    public int Id { get; set; }
+    public int Id { get; private set; }
 
     [Required]
     [MaxLength(100)]

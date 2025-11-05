@@ -6,7 +6,7 @@ namespace ContactBook.Domain.Entities;
 public class Phone
 {
     [Key]
-    public int Id { get; set; }
+    public int Id { get; private set; }
 
     [Required]
     [Phone]
@@ -14,6 +14,6 @@ public class Phone
     
     [ForeignKey("User")]
     public int UserId { get; set; }
-    
+
     public User User { get; set; } = null!;
 }
