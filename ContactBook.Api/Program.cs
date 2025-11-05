@@ -1,8 +1,13 @@
 
+using ContactBook.Infrastructure.Extensions;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddOpenApi();
+
+// Add Infrastructure Layer
+builder.Services.AddInfrastructure(builder.Configuration);
 
 var app = builder.Build();
 
