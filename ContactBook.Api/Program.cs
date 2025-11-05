@@ -1,3 +1,4 @@
+using ContactBook.Api.Middleware;
 using ContactBook.Api.Validators.User;
 using ContactBook.Application.Extensions;
 using ContactBook.Infrastructure.Extensions;
@@ -6,35 +7,37 @@ using FluentValidation.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 1️⃣ Добавляем сервисы контроллеров
+// Add services to the container.
 builder.Services.AddControllers();
 
-// 2️⃣ Swagger/OpenAPI
+// OpenAPI
 builder.Services.AddOpenApi();
 
-// 3️⃣ Инфраструктура
+// Add Infrastructure layer
 builder.Services.AddInfrastructure(builder.Configuration);
 
-// 4️⃣ Сервисы приложения
+// Add Application layer
 builder.Services.AddApplicationServices();
 
-// 5️⃣ FluentValidation
+// FluentValidation
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddFluentValidationClientsideAdapters();
 
+// Add logging
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+builder.Logging.AddDebug();
+builder.Logging.AddConfiguration(builder.Configuration.GetSection("Logging"));
+
 var app = builder.Build();
 
-// 6️⃣ Middleware
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
+//add custom middleware
+app.UseMiddleware<RequestLoggingMiddleware>();
 
 app.UseHttpsRedirection();
 app.UseAuthorization();
 
-// 7️⃣ Маршрутизация контроллеров
 app.MapControllers();
 
 app.Run();
