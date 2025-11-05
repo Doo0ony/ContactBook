@@ -1,5 +1,7 @@
 
+using ContactBook.Application.Interfaces.Repositories;
 using ContactBook.Infrastructure.Data;
+using ContactBook.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,7 +25,8 @@ public static class DependencyInjection
 
     private static IServiceCollection AddRepositories(this IServiceCollection services)
     {
-        // Register repositories here
+        services.AddScoped<IUserRepository, UserRepository>();
+        
         return services;
     }
 }
