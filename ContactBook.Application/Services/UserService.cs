@@ -1,5 +1,5 @@
 using AutoMapper;
-using ContactBook.Application.DTOs.User;
+using ContactBook.Shared.DTOs.User;
 using ContactBook.Application.Interfaces.Repositories;
 using ContactBook.Application.Interfaces.Services;
 using ContactBook.Domain.Common;

@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ContactBook.Domain\ContactBook.Domain.csproj" />
+    <ProjectReference Include="..\ContactBook.Shared\ContactBook.Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>

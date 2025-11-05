@@ -1,5 +1,5 @@
 using AutoMapper;
-using ContactBook.Application.DTOs.Phone;
+using ContactBook.Shared.DTOs.Phone;
 using ContactBook.Domain.Entities;
 
 namespace ContactBook.Application.MappingProfiles;

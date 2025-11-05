@@ -1,4 +1,4 @@
-using ContactBook.Application.DTOs.User;
+using ContactBook.Shared.DTOs.User;
 using ContactBook.Domain.Common;
 
 namespace ContactBook.Application.Interfaces.Services;
