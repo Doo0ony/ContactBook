@@ -1,3 +1,4 @@
+using AutoMapper;
 using ContactBook.Application.DTOs.User;
 using ContactBook.Application.Interfaces.Repositories;
 using ContactBook.Application.Interfaces.Services;
@@ -12,11 +13,13 @@ internal class UserService : IUserService
 {
     private readonly IGenericRepository<User> _userRepository;
     private readonly ILogger<UserService> _logger;
+    private readonly IMapper _mapper;
 
-    public UserService(IGenericRepository<User> userRepository, ILogger<UserService> logger)
+    public UserService(IGenericRepository<User> userRepository, ILogger<UserService> logger, IMapper mapper)
     {
         _userRepository = userRepository;
         _logger = logger;
+        _mapper = mapper;
     }
 
     public async Task<ServiceResult<UserDto?>> GetUserByIdAsync(int id, CancellationToken cancellationToken)
@@ -24,19 +27,13 @@ internal class UserService : IUserService
         _logger.LogInformation("Getting user by Id: {UserId}", id);
 
         var user = await _userRepository.GetByIdAsync(id, cancellationToken);
-        if (user == null)
+        if (user is null)
         {
             _logger.LogWarning("User with Id {UserId} not found", id);
             return ServiceResult<UserDto?>.FailResult("User not found", ErrorCode.NotFound);
         }
 
-        var dto = new UserDto
-        {
-            Id = user.Id,
-            Name = user.Name,
-            Email = user.Email,
-            DateOfBirth = user.DateOfBirth
-        };
+        var dto = _mapper.Map<UserDto>(user);
 
         _logger.LogInformation("User with Id {UserId} retrieved successfully", id);
         return ServiceResult<UserDto?>.SuccessResult(dto);
@@ -47,13 +44,8 @@ internal class UserService : IUserService
         _logger.LogInformation("Getting all users");
 
         var users = await _userRepository.GetAllAsync(cancellationToken);
-        var dtos = users.Select(u => new UserDto
-        {
-            Id = u.Id,
-            Name = u.Name,
-            Email = u.Email,
-            DateOfBirth = u.DateOfBirth
-        });
+        
+        var dtos = _mapper.Map<IEnumerable<UserDto>>(users);
 
         _logger.LogInformation("Retrieved {Count} users", dtos.Count());
         return ServiceResult<IEnumerable<UserDto>>.SuccessResult(dtos);
@@ -63,22 +55,11 @@ internal class UserService : IUserService
     {
         _logger.LogInformation("Adding new user: {UserName}", dto.Name);
 
-        var user = new User
-        {
-            Name = dto.Name,
-            Email = dto.Email,
-            DateOfBirth = dto.DateOfBirth
-        };
+        var user = _mapper.Map<User>(dto);
 
         await _userRepository.AddAsync(user, cancellationToken);
 
-        var resultDto = new UserDto
-        {
-            Id = user.Id,
-            Name = user.Name,
-            Email = user.Email,
-            DateOfBirth = user.DateOfBirth
-        };
+        var resultDto = _mapper.Map<UserDto>(user);
 
         _logger.LogInformation("User {UserId} added successfully", user.Id);
         return ServiceResult<UserDto>.SuccessResult(resultDto);

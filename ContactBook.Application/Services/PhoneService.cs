@@ -1,3 +1,4 @@
+using AutoMapper;
 using ContactBook.Application.DTOs.Phone;
 using ContactBook.Application.Interfaces.Repositories;
 using ContactBook.Application.Interfaces.Services;
@@ -13,15 +14,18 @@ internal class PhoneService : IPhoneService
     private readonly IPhoneRepository _phoneRepository;
     private readonly IUserRepository _userRepository;
     private readonly ILogger<PhoneService> _logger;
+    private readonly IMapper _mapper;
 
     public PhoneService(
         IPhoneRepository phoneRepository,
         IUserRepository userRepository,
-        ILogger<PhoneService> logger)
+        ILogger<PhoneService> logger,
+        IMapper mapper)
     {
         _phoneRepository = phoneRepository;
         _userRepository = userRepository;
         _logger = logger;
+        _mapper = mapper;
     }
 
     public async Task<ServiceResult<PhoneDto?>> GetPhoneByIdAsync(int id, CancellationToken cancellationToken)
@@ -50,12 +54,8 @@ internal class PhoneService : IPhoneService
         _logger.LogInformation("Getting all phones");
 
         var phones = await _phoneRepository.GetAllAsync(cancellationToken);
-        var dtos = phones.Select(p => new PhoneDto
-        {
-            Id = p.Id,
-            PhoneNumber = p.PhoneNumber,
-            UserId = p.UserId
-        });
+        
+        var dtos = _mapper.Map<IEnumerable<PhoneDto>>(phones);
 
         _logger.LogInformation("Loaded {Count} phones", dtos.Count());
 
@@ -73,11 +73,7 @@ internal class PhoneService : IPhoneService
             return ServiceResult<PhoneDto>.FailResult("User not found", ErrorCode.NotFound);
         }
 
-        var phone = new Phone
-        {
-            PhoneNumber = dto.PhoneNumber,
-            UserId = dto.UserId
-        };
+        var phone = _mapper.Map<Phone>(dto);
 
         await _phoneRepository.AddAsync(phone, cancellationToken);
 
@@ -128,7 +124,7 @@ internal class PhoneService : IPhoneService
         _logger.LogInformation("Deleting phone {PhoneId}", id);
 
         var phone = await _phoneRepository.GetByIdAsync(id, cancellationToken);
-        if (phone == null)
+        if (phone is null)
         {
             _logger.LogWarning("Phone not found for delete: {PhoneId}", id);
             return ServiceResult.FailResult("Phone not found", ErrorCode.NotFound);
