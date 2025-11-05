@@ -53,4 +53,11 @@ public class PhoneController : ControllerBase
         var result = await _phoneService.DeletePhoneAsync(id, cancellationToken);
         return result.ToActionResult();
     }
+
+    [HttpGet("user/{userId:int}")]
+    public async Task<IActionResult> GetPhonesByUserId(int userId, CancellationToken cancellationToken)
+    {
+        var result = await _phoneService.GetPhonesByUserIdAsync(userId, cancellationToken);
+        return result.ToActionResult();
+    }
 }
