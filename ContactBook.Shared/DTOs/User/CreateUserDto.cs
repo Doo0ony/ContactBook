@@ -1,4 +1,4 @@
-namespace ContactBook.Application.DTOs.User;
+namespace ContactBook.Shared.DTOs.User;
 
 public class CreateUserDto
 {

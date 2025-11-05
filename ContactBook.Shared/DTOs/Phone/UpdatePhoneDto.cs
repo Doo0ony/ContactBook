@@ -1,4 +1,4 @@
-namespace ContactBook.Application.DTOs.Phone;
+namespace ContactBook.Shared.DTOs.Phone;
 
 public class UpdatePhoneDto
 {
