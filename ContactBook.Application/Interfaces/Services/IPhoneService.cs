@@ -10,4 +10,5 @@ public interface IPhoneService
     Task<ServiceResult<PhoneDto>> AddPhoneAsync(CreatePhoneDto dto, CancellationToken cancellationToken);
     Task<ServiceResult> UpdatePhoneAsync(int id, UpdatePhoneDto dto, CancellationToken cancellationToken);
     Task<ServiceResult> DeletePhoneAsync(int id, CancellationToken cancellationToken);
+    Task<ServiceResult<IEnumerable<PhoneDto>>> GetPhonesByUserIdAsync(int userId, CancellationToken cancellationToken);
 }

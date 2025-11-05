@@ -136,4 +136,17 @@ internal class PhoneService : IPhoneService
 
         return ServiceResult.SuccessResult("Phone deleted successfully");
     }
+
+    public async Task<ServiceResult<IEnumerable<PhoneDto>>> GetPhonesByUserIdAsync(int userId, CancellationToken cancellationToken)
+    {
+        _logger.LogInformation("Getting phones for UserId: {UserId}", userId);
+
+        var phones = await _phoneRepository.GetPhonesByUserIdAsync(userId, cancellationToken);
+        
+        var dtos = _mapper.Map<IEnumerable<PhoneDto>>(phones);
+
+        _logger.LogInformation("Loaded {Count} phones for UserId: {UserId}", dtos.Count(), userId);
+
+        return ServiceResult<IEnumerable<PhoneDto>>.SuccessResult(dtos);
+    }
 }
