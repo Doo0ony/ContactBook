@@ -1,11 +1,13 @@
+using ContactBook.Application.DTOs.User;
+using ContactBook.Domain.Common;
+
 namespace ContactBook.Application.Interfaces.Services;
 
 public interface IUserService
 {
-    //TODO: Change to dtos
-    Task<Domain.Entities.User?> GetUserByIdAsync(object id, CancellationToken cancellationToken);
-    Task<IEnumerable<Domain.Entities.User>> GetAllUsersAsync(CancellationToken cancellationToken);
-    Task AddUserAsync(Domain.Entities.User user, CancellationToken cancellationToken);
-    Task UpdateUser(Domain.Entities.User user, CancellationToken cancellationToken);
-    Task DeleteUser(Domain.Entities.User user, CancellationToken cancellationToken);
+    Task<ServiceResult<UserDto?>> GetUserByIdAsync(int id, CancellationToken cancellationToken);
+    Task<ServiceResult<IEnumerable<UserDto>>> GetAllUsersAsync(CancellationToken cancellationToken);
+    Task<ServiceResult<UserDto>> AddUserAsync(CreateUserDto dto, CancellationToken cancellationToken);
+    Task<ServiceResult> UpdateUserAsync(UpdateUserDto dto, CancellationToken cancellationToken);
+    Task<ServiceResult> DeleteUserAsync(int id, CancellationToken cancellationToken);
 }

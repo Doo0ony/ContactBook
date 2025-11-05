@@ -1,33 +1,101 @@
-using System.Threading.Tasks;
+using ContactBook.Application.DTOs.User;
 using ContactBook.Application.Interfaces.Repositories;
 using ContactBook.Application.Interfaces.Services;
+using ContactBook.Domain.Common;
+using ContactBook.Domain.Entities;
+using ContactBook.Domain.Enums;
 
 namespace ContactBook.Application.Services;
 
-internal class UserService(IUserRepository userRepository) : IUserService
+internal class UserService : IUserService
 {
-    public async Task<Domain.Entities.User?> GetUserByIdAsync(object id, CancellationToken cancellationToken)
+    private readonly IGenericRepository<User> _userRepository;
+
+    public UserService(IGenericRepository<User> userRepository)
     {
-        return await userRepository.GetByIdAsync(id, cancellationToken);
+        _userRepository = userRepository;
     }
 
-    public async Task<IEnumerable<Domain.Entities.User>> GetAllUsersAsync(CancellationToken cancellationToken)
+    public async Task<ServiceResult<UserDto?>> GetUserByIdAsync(int id, CancellationToken cancellationToken)
     {
-        return await userRepository.GetAllAsync(cancellationToken);
+        var user = await _userRepository.GetByIdAsync(id, cancellationToken);
+        if (user == null)
+            return ServiceResult<UserDto?>.FailResult("User not found", ErrorCode.NotFound);
+
+        var dto = new UserDto
+        {
+            Id = user.Id,
+            Name = user.Name,
+            Email = user.Email,
+            DateOfBirth = user.DateOfBirth
+        };
+
+        return ServiceResult<UserDto?>.SuccessResult(dto);
     }
 
-    public async Task AddUserAsync(Domain.Entities.User user, CancellationToken cancellationToken)
+    public async Task<ServiceResult<IEnumerable<UserDto>>> GetAllUsersAsync(CancellationToken cancellationToken)
     {
-        await userRepository.AddAsync(user, cancellationToken);
+        var users = await _userRepository.GetAllAsync(cancellationToken);
+        var dtos = users.Select(u => new UserDto
+        {
+            Id = u.Id,
+            Name = u.Name,
+            Email = u.Email,
+            DateOfBirth = u.DateOfBirth
+        });
+
+        return ServiceResult<IEnumerable<UserDto>>.SuccessResult(dtos);
     }
 
-    public async Task UpdateUser(Domain.Entities.User user , CancellationToken cancellationToken)
+    public async Task<ServiceResult<UserDto>> AddUserAsync(CreateUserDto dto, CancellationToken cancellationToken)
     {
-        await userRepository.UpdateAsync(user , cancellationToken);
+        var user = new User
+        {
+            Name = dto.Name,
+            Email = dto.Email,
+            DateOfBirth = dto.DateOfBirth
+        };
+
+        await _userRepository.AddAsync(user, cancellationToken);
+
+        var resultDto = new UserDto
+        {
+            Id = user.Id,
+            Name = user.Name,
+            Email = user.Email,
+            DateOfBirth = user.DateOfBirth
+        };
+
+        return ServiceResult<UserDto>.SuccessResult(resultDto);
     }
 
-    public async Task DeleteUser(Domain.Entities.User user, CancellationToken cancellationToken)
+    public async Task<ServiceResult> UpdateUserAsync(UpdateUserDto dto, CancellationToken cancellationToken)
     {
-        await userRepository.DeleteAsync(user, cancellationToken);
+        var user = await _userRepository.GetByIdAsync(dto.Id, cancellationToken);
+        if (user is null)
+            return ServiceResult.FailResult("User not found", ErrorCode.NotFound);
+
+        if (!string.IsNullOrEmpty(dto.Name))
+            user.Name = dto.Name;
+
+        if (!string.IsNullOrEmpty(dto.Email))
+            user.Email = dto.Email;
+
+        if (dto.DateOfBirth.HasValue)
+            user.DateOfBirth = dto.DateOfBirth.Value;
+
+        await _userRepository.UpdateAsync(user, cancellationToken);
+
+        return ServiceResult.SuccessResult("User updated successfully");
+    }
+
+    public async Task<ServiceResult> DeleteUserAsync(int id, CancellationToken cancellationToken)
+    {
+        var user = await _userRepository.GetByIdAsync(id, cancellationToken);
+        if (user is null)
+            return ServiceResult.FailResult("User not found", ErrorCode.NotFound);
+
+        await _userRepository.DeleteAsync(user, cancellationToken);
+        return ServiceResult.SuccessResult("User deleted successfully");
     }
 }
