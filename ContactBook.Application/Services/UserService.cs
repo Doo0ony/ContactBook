@@ -11,11 +11,11 @@ namespace ContactBook.Application.Services;
 
 internal class UserService : IUserService
 {
-    private readonly IGenericRepository<User> _userRepository;
+    private readonly IUserRepository _userRepository;
     private readonly ILogger<UserService> _logger;
     private readonly IMapper _mapper;
 
-    public UserService(IGenericRepository<User> userRepository, ILogger<UserService> logger, IMapper mapper)
+    public UserService(IUserRepository userRepository, ILogger<UserService> logger, IMapper mapper)
     {
         _userRepository = userRepository;
         _logger = logger;
