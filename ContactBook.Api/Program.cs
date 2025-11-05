@@ -1,4 +1,5 @@
 
+using ContactBook.Application.Extensions;
 using ContactBook.Infrastructure.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,6 +10,10 @@ builder.Services.AddOpenApi();
 // Add Infrastructure Layer
 builder.Services.AddInfrastructure(builder.Configuration);
 
+// Add Application Layer
+builder.Services.AddApplicationServices();
+
+builder.Services.AddControllers();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -18,5 +23,5 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.MapControllers();
 app.Run();
