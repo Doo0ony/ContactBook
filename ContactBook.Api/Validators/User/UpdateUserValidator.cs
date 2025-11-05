@@ -1,5 +1,5 @@
 using FluentValidation;
-using ContactBook.Application.DTOs.User;
+using ContactBook.Shared.DTOs.User;
 
 namespace ContactBook.Api.Validators.User;
 public class UpdateUserDtoValidator : AbstractValidator<UpdateUserDto>

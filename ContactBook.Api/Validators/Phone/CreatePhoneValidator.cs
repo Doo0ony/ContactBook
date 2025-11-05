@@ -1,5 +1,5 @@
 using FluentValidation;
-using ContactBook.Application.DTOs.Phone;
+using ContactBook.Shared.DTOs.Phone;
 
 namespace ContactBook.Api.Validators.Phone;
 

@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using ContactBook.Application.Interfaces.Services;
-using ContactBook.Application.DTOs.User;
+using ContactBook.Shared.DTOs.User;
 using ContactBook.Api.Extensions;
 
 namespace ContactBook.Api.Controllers;
