@@ -33,9 +33,6 @@ public class UserController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateUserDto dto, CancellationToken cancellationToken)
     {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-
         var result = await _userService.AddUserAsync(dto, cancellationToken);
         return result.ToActionResult();
     }
