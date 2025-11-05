@@ -21,10 +21,10 @@ internal class GenericRepository<T> : IGenericRepository<T> where T : class
         await _context.SaveChangesAsync(cancellationToken);
     }
 
-    public void Delete(T entity)
+    public async Task DeleteAsync(T entity, CancellationToken cancellationToken)
     {
         _dbSet.Remove(entity);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync(cancellationToken);
     }
 
     public async Task<IEnumerable<T>> GetAllAsync(CancellationToken cancellationToken)
@@ -34,12 +34,12 @@ internal class GenericRepository<T> : IGenericRepository<T> where T : class
 
     public async Task<T?> GetByIdAsync(object id, CancellationToken cancellationToken)
     {
-        return await _dbSet.FindAsync([id], cancellationToken);
+        return await _dbSet.FindAsync(new object[] { id }, cancellationToken);
     }
 
-    public void Update(T entity)
+    public async Task UpdateAsync(T entity, CancellationToken cancellationToken)
     {
         _dbSet.Update(entity);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync(cancellationToken);
     }
 }
