@@ -1,5 +1,5 @@
+
 using ContactBook.Api.Middleware;
-using ContactBook.Api.Validators.User;
 using ContactBook.Application.Extensions;
 using ContactBook.Infrastructure.Extensions;
 using FluentValidation;
@@ -23,6 +23,9 @@ builder.Services.AddApplicationServices();
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddFluentValidationClientsideAdapters();
+
+// Add AutoMapper
+builder.Services.AddMappingProfiles(builder.Configuration);
 
 // Add logging
 builder.Logging.ClearProviders();
