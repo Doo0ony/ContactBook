@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using ContactBook.Application.Interfaces.Repositories;
 using ContactBook.Application.Interfaces.Services;
 
@@ -20,13 +21,13 @@ internal class UserService(IUserRepository userRepository) : IUserService
         await userRepository.AddAsync(user, cancellationToken);
     }
 
-    public void UpdateUser(Domain.Entities.User user)
+    public async Task UpdateUser(Domain.Entities.User user , CancellationToken cancellationToken)
     {
-        userRepository.Update(user);
+        await userRepository.UpdateAsync(user , cancellationToken);
     }
 
-    public void DeleteUser(Domain.Entities.User user)
+    public async Task DeleteUser(Domain.Entities.User user, CancellationToken cancellationToken)
     {
-        userRepository.Delete(user);
+        await userRepository.DeleteAsync(user, cancellationToken);
     }
 }

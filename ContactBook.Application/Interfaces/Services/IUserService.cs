@@ -6,6 +6,6 @@ public interface IUserService
     Task<Domain.Entities.User?> GetUserByIdAsync(object id, CancellationToken cancellationToken);
     Task<IEnumerable<Domain.Entities.User>> GetAllUsersAsync(CancellationToken cancellationToken);
     Task AddUserAsync(Domain.Entities.User user, CancellationToken cancellationToken);
-    void UpdateUser(Domain.Entities.User user);
-    void DeleteUser(Domain.Entities.User user);
+    Task UpdateUser(Domain.Entities.User user, CancellationToken cancellationToken);
+    Task DeleteUser(Domain.Entities.User user, CancellationToken cancellationToken);
 }
