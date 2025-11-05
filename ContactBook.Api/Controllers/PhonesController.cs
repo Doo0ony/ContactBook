@@ -7,11 +7,11 @@ namespace ContactBook.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class PhoneController : ControllerBase
+public class PhonesController : ControllerBase
 {
     private readonly IPhoneService _phoneService;
 
-    public PhoneController(IPhoneService phoneService)
+    public PhonesController(IPhoneService phoneService)
     {
         _phoneService = phoneService;
     }
