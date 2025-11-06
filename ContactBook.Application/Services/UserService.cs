@@ -57,6 +57,13 @@ internal class UserService : IUserService
 
         var user = _mapper.Map<User>(dto);
 
+        var existsingUser = await _userRepository.GetByEmailAsync(dto.Email, cancellationToken);
+        if (existsingUser is not null)
+        {
+            _logger.LogWarning("User with email {UserEmail} already exists", dto.Email);
+            return ServiceResult<UserDto>.FailResult("User with this email already exists", ErrorCode.Conflict);
+        }
+        
         await _userRepository.AddAsync(user, cancellationToken);
 
         var resultDto = _mapper.Map<UserDto>(user);
@@ -80,7 +87,16 @@ internal class UserService : IUserService
             user.Name = dto.Name;
 
         if (!string.IsNullOrEmpty(dto.Email))
+        {
+            var userWithEmail = await _userRepository.GetByEmailAsync(dto.Email, cancellationToken);
+            if (userWithEmail is not null && userWithEmail.Id != dto.Id)
+            {
+                _logger.LogWarning("User with email {UserEmail} already exists", dto.Email);
+                return ServiceResult.FailResult("User with this email already exists", ErrorCode.Conflict);
+            }
+            
             user.Email = dto.Email;
+        }
 
         if (dto.DateOfBirth.HasValue)
             user.DateOfBirth = dto.DateOfBirth.Value;
