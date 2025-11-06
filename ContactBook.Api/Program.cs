@@ -33,10 +33,24 @@ builder.Logging.AddConsole();
 builder.Logging.AddDebug();
 builder.Logging.AddConfiguration(builder.Configuration.GetSection("Logging"));
 
+// Add CORS policy
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.WithOrigins("http://localhost:5071") // blazor client origin
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
 var app = builder.Build();
 
 //add custom middleware
 app.UseMiddleware<RequestLoggingMiddleware>();
+
+//use CORS policy
+app.UseCors("AllowFrontend");
 
 app.UseHttpsRedirection();
 app.UseAuthorization();
