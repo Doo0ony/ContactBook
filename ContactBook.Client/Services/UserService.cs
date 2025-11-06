@@ -31,9 +31,9 @@ public class UserService
             throw new Exception("Failed to create user");
     }
 
-    public async Task<UserDto> UpdateUserAsync(int id, UpdateUserDto updateUserDto)
+    public async Task<UserDto> UpdateUserAsync(UpdateUserDto updateUserDto)
     {
-        var response = await _httpClient.PutAsJsonAsync($"users/{id}", updateUserDto);
+        var response = await _httpClient.PutAsJsonAsync($"users/{updateUserDto.Id}", updateUserDto);
         response.EnsureSuccessStatusCode();
         return await response.Content.ReadFromJsonAsync<UserDto>() ??
             throw new Exception("Failed to update user");
