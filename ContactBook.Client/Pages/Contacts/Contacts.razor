@@ -1,0 +1,123 @@
+@page "/contacts"
+@inherits UsersPhonesBase
+
+<h1 class="mb-3">Users & Phones</h1>
+
+<button class="btn btn-primary mb-3" @onclick="ShowAddUserModal">Add User</button>
+
+<div class="users-list d-flex flex-column gap-3">
+    @if (users != null)
+    {
+        @foreach (var user in users)
+        {
+            <div class="card p-3 shadow-sm">
+                <div class="d-flex justify-content-between align-items-start flex-wrap">
+                    <div>
+                        <h5>@user.Name</h5>
+                        <p class="mb-1">@user.Email</p>
+                        <div class="d-flex gap-2 flex-wrap mb-2">
+                            <button class="btn btn-sm btn-secondary" @onclick="() => ShowEditUserModal(user)">Edit User</button>
+                            <button class="btn btn-sm btn-danger" @onclick="() => ConfirmDeleteUser(user)">Delete User</button>
+                            <button class="btn btn-sm btn-outline-primary" @onclick="() => TogglePhones(user)">
+                                @(IsUserPhonesVisible(user) ? "Hide Phones" : "Show Phones")
+                            </button>
+                            <button class="btn btn-sm btn-primary" @onclick="() => ShowAddPhoneModal(user)">Add Phone</button>
+                        </div>
+                    </div>
+                </div>
+
+                @if (IsUserPhonesVisible(user))
+                {
+                    <div class="phones-list mt-2 p-2 border rounded bg-light">
+                        @if (userPhones.ContainsKey(user.Id) && userPhones[user.Id].Count > 0)
+                        {
+                            <ul class="list-unstyled mb-0">
+                                @foreach (var phone in userPhones[user.Id])
+                                {
+                                    <li class="d-flex justify-content-between align-items-center mb-1">
+                                        <span>@phone.PhoneNumber</span>
+                                        <div class="d-flex gap-1">
+                                            <button class="btn btn-sm btn-secondary" @onclick="() => ShowEditPhoneModal(phone, user)">Edit</button>
+                                            <button class="btn btn-sm btn-danger" @onclick="() => ConfirmDeletePhone(phone, user)">Delete</button>
+                                        </div>
+                                    </li>
+                                }
+                            </ul>
+                        }
+                        else
+                        {
+                            <p class="mb-0 fst-italic text-muted">No phone numbers.</p>
+                        }
+                    </div>
+                }
+            </div>
+        }
+    }
+</div>
+
+<!-- User Modal -->
+@if (showUserModal)
+{
+    <div class="modal show d-block">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">@((editUser.Id == 0) ? "Add User" : "Edit User")</h5>
+                    <button type="button" class="btn-close" @onclick="CloseUserModal"></button>
+                </div>
+                <div class="modal-body">
+                    <input class="form-control mb-2" placeholder="Name" @bind="editUser.Name" />
+                    <input class="form-control mb-2" placeholder="Email" @bind="editUser.Email" />
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" @onclick="CloseUserModal">Cancel</button>
+                    <button class="btn btn-primary" @onclick="SaveUser">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- Phone Modal -->
+@if (showPhoneModal)
+{
+    <div class="modal show d-block">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">@((editPhone?.Id == 0) ? $"Add Phone for {currentPhoneUser?.Name}" : "Edit Phone")</h5>
+                    <button type="button" class="btn-close" @onclick="ClosePhoneModal"></button>
+                </div>
+                <div class="modal-body">
+                    <input class="form-control" placeholder="Phone Number" @bind="phoneNumberInput" />
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" @onclick="ClosePhoneModal">Cancel</button>
+                    <button class="btn btn-primary" @onclick="SavePhone">@((editPhone?.Id == 0) ? "Add" : "Save")</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- Confirm Modal -->
+@if (showConfirmModal)
+{
+    <div class="modal show d-block">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirm</h5>
+                    <button type="button" class="btn-close" @onclick="CloseConfirmModal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>@confirmMessage</p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" @onclick="CloseConfirmModal">Cancel</button>
+                    <button class="btn btn-danger" @onclick="ConfirmDeleteAction">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
